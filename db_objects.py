@@ -29,12 +29,10 @@ class Db:
         try:
             [segment_file, pos] = self.index[key]
         except:
-            #print('Chave não encontrada no indice.')
             return None
         with open(data_dir + '/' + str(segment_file).zfill(3),'r') as f:
             f.seek(pos)
             return f.readline()
-            #print('Valor: ' + f.readline())
 
     def populate_index(self):
         for x in sorted(list(Path(data_dir).iterdir())):
@@ -50,7 +48,6 @@ class Db:
                     value = line.split(',')[1]
                     pos = f.tell() - len(value)
                     self.index[key] = [segment_file, pos]
-                    #print(str(pos) + " - " + str(key) + " - " + str(value))
 
     def set_segment_size(self, size):
         self.max_segment_size = int(size)
@@ -78,7 +75,6 @@ class Db:
                 key = line.split(',')[0]
                 value = line.split(',')[1]
                 pos = orig_file.tell() - len(value)
-                #print(key + ' - ' + value + ' - ' + str(pos))
                 if self.index[key][0] == segment and self.index[key][1] == pos:
                     with open(temp_data_dir + '/' + str(segment).zfill(3),'a') as new_file:
                         new_file.write(key + "," + value)
@@ -107,7 +103,6 @@ class Db:
                 f.write(key + "," + value)
             size = Path(temp_data_dir + '/' + str(curr_segment).zfill(3)).stat().st_size
             new_index[key] = [curr_segment, size - len(value)]
-        #print(new_index)
         shutil.rmtree(data_dir)
         rename(temp_data_dir, data_dir)
         self.segment_file = curr_segment
